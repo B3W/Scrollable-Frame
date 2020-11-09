@@ -104,7 +104,7 @@ class ScrollableFrame(ttk.Frame):
             self.visible_start_index = new_start_index
 
             new_end_index = end_index + self.VISIBLE_END_INDEX_BUFFER
-            new_end_index = min(self.num_widgets, new_end_index)
+            new_end_index = min(self.num_widgets - 1, new_end_index)
             self.visible_end_index = new_end_index
 
             for i in range(new_start_index, new_end_index + 1):
