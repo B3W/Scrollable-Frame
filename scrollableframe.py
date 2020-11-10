@@ -75,23 +75,15 @@ class ScrollableFrame(ttk.Frame):
         self.widget_frame.bind('<Enter>', self.__bind_mousewheel)
         self.widget_frame.bind('<Leave>', self.__unbind_mousewheel)
 
-    def populate(self, row_cnt):
-        for i in range(row_cnt):
-            label = ttk.Label(self.widget_frame,
-                              text=f'Label {i}',
-                              anchor=tk.CENTER)
-            label.wtype = WidgetType.WTYPE_LEAF
-            label.depth = label.master.depth + 1
-            label.visible = False
-            label.grid(column=0, row=i, sticky=tk.EW)
-            self.widgets.append(label)
-            self.num_widgets += 1
-
-    def check(self):
-        for widget in self.widgets:
-            if widget.visible:
-                print(f'{widget["text"]}: {widget.visible}')
-        print()
+    def add_widget(self, text):
+        label = ttk.Label(self.widget_frame, text=text, anchor=tk.CENTER)
+        label.wtype = WidgetType.WTYPE_LEAF
+        label.depth = label.master.depth + 1
+        label.visible = False
+        label.grid(column=0, row=self.num_widgets, sticky=tk.EW)
+        self.widgets.append(label)
+        self.num_widgets += 1
+        self.__check_visible_widget_range()
 
     def __update_visible_widgets(self, start_index, end_index):
         '''Updates which widgets are designated as visible'''
