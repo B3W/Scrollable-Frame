@@ -18,7 +18,14 @@ class ScrollableFrame(ttk.Frame):
     UI element displaying widgets that can be scrolled through. UI element also
     dynamically determines which widgets in the scrollable region are visible.
     '''
-    def __init__(self, master, *args, **kwargs):
+    def __init__(self, master, sfunc=None, hfunc=None, *args, **kwargs):
+        '''
+        Overriden initialization function
+
+        :param master: Widget's master
+        :param sfunc: Pointer to function to call on widgets set to visible
+        :param hfunc: Pointer to function to call on widgets set to hidden
+        '''
         # Initialize root frame
         ttk.Frame.__init__(self, master, *args, **kwargs)
 
@@ -36,6 +43,8 @@ class ScrollableFrame(ttk.Frame):
         self.VISIBLE_START_INDEX_BUFFER = 3
         self.visible_end_index = -1
         self.VISIBLE_END_INDEX_BUFFER = 3
+        self.show_function = sfunc
+        self.hide_function = hfunc
 
         # Initialize Canvas to hold 'scrollable' frame
         self.canvas_frame = ttk.Frame(self)
@@ -80,6 +89,16 @@ class ScrollableFrame(ttk.Frame):
         self.canvas.yview_moveto(1.0)   # Scroll to bottom of canvas
         self._check_visible_widget_range()
 
+    def __set_visible(self, widget):
+        widget.visible = True
+        if self.show_function is not None:
+            self.show_function(widget)
+
+    def __set_hidden(self, widget):
+        widget.visible = False
+        if self.hide_function is not None:
+            self.hide_function(widget)
+
     def __update_visible_widgets(self, start_index, end_index):
         '''Updates which widgets are designated as visible'''
         if not self.initial_check:
@@ -95,7 +114,8 @@ class ScrollableFrame(ttk.Frame):
             self.visible_end_index = new_end_index
 
             for i in range(new_start_index, new_end_index + 1):
-                self.widgets[i].visible = True
+                self.__set_visible(self.widgets[i])
+
         else:
             # Update which widgets are now visible/not visible
             new_start_index = start_index - self.VISIBLE_START_INDEX_BUFFER
@@ -103,10 +123,10 @@ class ScrollableFrame(ttk.Frame):
 
             if new_start_index < self.visible_start_index:
                 for i in range(new_start_index, self.visible_start_index):
-                    self.widgets[i].visible = True
+                    self.__set_visible(self.widgets[i])
             else:
                 for i in range(self.visible_start_index, new_start_index):
-                    self.widgets[i].visible = False
+                    self.__set_hidden(self.widgets[i])
 
             self.visible_start_index = new_start_index
 
@@ -115,10 +135,10 @@ class ScrollableFrame(ttk.Frame):
 
             if new_end_index < self.visible_end_index:
                 for i in range(self.visible_end_index, new_end_index, -1):
-                    self.widgets[i].visible = False
+                    self.__set_hidden(self.widgets[i])
             else:
                 for i in range(new_end_index, self.visible_end_index, -1):
-                    self.widgets[i].visible = True
+                    self.__set_visible(self.widgets[i])
 
             self.visible_end_index = new_end_index
 

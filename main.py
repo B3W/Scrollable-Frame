@@ -9,8 +9,11 @@ def populate(cnt):
 
 
 def add(text):
-    lframe.add_label(text)
+    global add_btn_cnt
+
+    lframe.add_label(f'{text} {add_btn_cnt}')
     lframe.scroll_bottom()
+    add_btn_cnt += 1
 
 
 def check(widgets):
@@ -34,9 +37,10 @@ if __name__ == '__main__':
     btn_frame = ttk.Frame(root)
     btn_frame.grid(column=0, row=1, sticky=tk.EW)
 
+    add_btn_cnt = 0
     add_btn = ttk.Button(btn_frame,
                          text='add',
-                         command=lambda: add(f'Add Lbl'))
+                         command=lambda: add('Add Lbl'))
     add_btn.pack(side=tk.LEFT, fill=tk.X, expand=True)
 
     test_btn = ttk.Button(btn_frame,

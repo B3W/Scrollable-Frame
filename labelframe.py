@@ -6,6 +6,14 @@ from scrollableframe import WidgetType
 
 class LabelFrame(ScrollableFrame):
     '''Derived class that defines logic for adding a widget to the frame'''
+    def __init__(self, master, *args, **kwargs):
+        ScrollableFrame.__init__(self,
+                                 master,
+                                 LabelFrame.set_visible,
+                                 LabelFrame.set_hidden,
+                                 *args,
+                                 **kwargs)
+
     def add_label(self, text):
         label = ttk.Label(self.widget_frame, text=text, anchor=tk.CENTER)
         label.wtype = WidgetType.WTYPE_LEAF
@@ -15,3 +23,9 @@ class LabelFrame(ScrollableFrame):
         self.widgets.append(label)
         self.num_widgets += 1
         self._check_visible_widget_range()
+
+    def set_visible(label):
+        print(f'\'{label["text"]}\' set visible')
+
+    def set_hidden(label):
+        print(f'\'{label["text"]}\' set hidden')
