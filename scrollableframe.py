@@ -195,8 +195,8 @@ class ScrollableFrame(ttk.Frame):
 
     def __on_mousewheel(self, event):
         '''Callback for all widget's <Mousewheel> event'''
-        # Do not allow scrolling if scrollbars are hidden
         if self.vsb.hidden:
+            # Do not allow scrolling if scrollbars are hidden
             return
 
         # Get sign of delta then reverse to get scroll direction
