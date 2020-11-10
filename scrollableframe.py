@@ -20,7 +20,7 @@ class ScrollableFrame(ttk.Frame):
     '''
     def __init__(self, master, sfunc=None, hfunc=None, *args, **kwargs):
         '''
-        Overriden initialization function
+        Override of ttk.Frame's initialization function
 
         :param master: Widget's master
         :param sfunc: Pointer to function to call on widgets set to visible
