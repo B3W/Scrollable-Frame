@@ -8,6 +8,11 @@ def populate(cnt):
         sframe.add_widget(f'Label {i}')
 
 
+def add(text):
+    sframe.add_widget(text)
+    sframe.scroll_bottom()
+
+
 def check(widgets):
     for widget in widgets:
         if widget.visible:
@@ -31,7 +36,7 @@ if __name__ == '__main__':
 
     add_btn = ttk.Button(btn_frame,
                          text='add',
-                         command=lambda: sframe.add_widget(f'Add Lbl'))
+                         command=lambda: add(f'Add Lbl'))
     add_btn.pack(side=tk.LEFT, fill=tk.X, expand=True)
 
     test_btn = ttk.Button(btn_frame,

@@ -85,6 +85,11 @@ class ScrollableFrame(ttk.Frame):
         self.num_widgets += 1
         self.__check_visible_widget_range()
 
+    def scroll_bottom(self):
+        self.canvas.update_idletasks()  # Let canvas finish layout calculations
+        self.canvas.yview_moveto(1.0)   # Scroll to bottom of canvas
+        self.__check_visible_widget_range()
+
     def __update_visible_widgets(self, start_index, end_index):
         '''Updates which widgets are designated as visible'''
         if not self.initial_check:
