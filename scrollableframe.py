@@ -75,20 +75,10 @@ class ScrollableFrame(ttk.Frame):
         self.widget_frame.bind('<Enter>', self.__bind_mousewheel)
         self.widget_frame.bind('<Leave>', self.__unbind_mousewheel)
 
-    def add_widget(self, text):
-        label = ttk.Label(self.widget_frame, text=text, anchor=tk.CENTER)
-        label.wtype = WidgetType.WTYPE_LEAF
-        label.depth = label.master.depth + 1
-        label.visible = False
-        label.grid(column=0, row=self.num_widgets, sticky=tk.EW)
-        self.widgets.append(label)
-        self.num_widgets += 1
-        self.__check_visible_widget_range()
-
     def scroll_bottom(self):
         self.canvas.update_idletasks()  # Let canvas finish layout calculations
         self.canvas.yview_moveto(1.0)   # Scroll to bottom of canvas
-        self.__check_visible_widget_range()
+        self._check_visible_widget_range()
 
     def __update_visible_widgets(self, start_index, end_index):
         '''Updates which widgets are designated as visible'''
@@ -132,7 +122,7 @@ class ScrollableFrame(ttk.Frame):
 
             self.visible_end_index = new_end_index
 
-    def __check_visible_widget_range(self):
+    def _check_visible_widget_range(self):
         '''Retrieves first and last visible widget in the scrollable frame'''
         if len(self.widgets) == 0:
             # No widgets == none visible
@@ -186,7 +176,7 @@ class ScrollableFrame(ttk.Frame):
 
     def __configure_canvas(self, width, reset):
         self.canvas.itemconfigure(self.cframe_id, width=width)
-        self.__check_visible_widget_range()
+        self._check_visible_widget_range()
         self.configuring = not reset
 
     def __update_scrollregion(self, event=None):
@@ -212,4 +202,4 @@ class ScrollableFrame(ttk.Frame):
         # Get sign of delta then reverse to get scroll direction
         scroll_dir = -1 * int(math.copysign(1, event.delta))
         self.canvas.yview_scroll(scroll_dir, 'units')
-        self.__check_visible_widget_range()
+        self._check_visible_widget_range()

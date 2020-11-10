@@ -1,16 +1,16 @@
 import tkinter as tk
 from tkinter import ttk
-import scrollableframe as sf
+import labelframe as lf
 
 
 def populate(cnt):
     for i in range(cnt):
-        sframe.add_widget(f'Label {i}')
+        lframe.add_label(f'Label {i}')
 
 
 def add(text):
-    sframe.add_widget(text)
-    sframe.scroll_bottom()
+    lframe.add_label(text)
+    lframe.scroll_bottom()
 
 
 def check(widgets):
@@ -27,8 +27,8 @@ if __name__ == '__main__':
     root.rowconfigure(0, weight=1)
     root.minsize(width=400, height=300)
 
-    sframe = sf.ScrollableFrame(root)
-    sframe.grid(column=0, row=0, sticky=tk.NSEW)
+    lframe = lf.LabelFrame(root)
+    lframe.grid(column=0, row=0, sticky=tk.NSEW)
     populate(5)
 
     btn_frame = ttk.Frame(root)
@@ -41,7 +41,7 @@ if __name__ == '__main__':
 
     test_btn = ttk.Button(btn_frame,
                           text='test',
-                          command=lambda: check(sframe.widgets))
+                          command=lambda: check(lframe.widgets))
     test_btn.pack(side=tk.RIGHT, fill=tk.X, expand=True)
 
     root.mainloop()
