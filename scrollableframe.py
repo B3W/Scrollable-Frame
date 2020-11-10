@@ -170,6 +170,7 @@ class ScrollableFrame(ttk.Frame):
 
     # CALLBACKS
     def __on_canvas_configure(self, event):
+        '''Callback for canvas's <Configure> event'''
         if not self.configuring:
             # Configure and then delay until next config to lower CPU load
             self.configuring = True
@@ -184,17 +185,21 @@ class ScrollableFrame(ttk.Frame):
         self.configuring = not reset
 
     def __update_scrollregion(self, event=None):
+        '''Callback for inner frame's <Configure> event'''
         self.canvas.configure(scrollregion=self.canvas.bbox(tk.ALL))
 
     def __bind_mousewheel(self, event):
+        '''Callback for inner frame's <Enter> event'''
         # Bind the root scrollable widget to the scrolling callback
         self.canvas.bind_all('<MouseWheel>', self.__on_mousewheel)
 
     def __unbind_mousewheel(self, event):
+        '''Callback for inner frame's <Leave> event'''
         # Unbind the root scrollable widget from the scrolling callback
         self.canvas.unbind_all('<MouseWheel>')
 
     def __on_mousewheel(self, event):
+        '''Callback for all widget's <Mousewheel> event'''
         # Do not allow scrolling if scrollbars are hidden
         if self.vsb.hidden:
             return
