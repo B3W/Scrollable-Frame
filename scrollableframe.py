@@ -89,13 +89,45 @@ class ScrollableFrame(ttk.Frame):
         self.canvas.yview_moveto(1.0)   # Scroll to bottom of canvas
         self._check_visible_widget_range()
 
+    def _check_visible_widget_range(self):
+        '''
+        Retrieves first and last visible widget in the scrollable frame. Allow
+        it to be overriden in derived classes in case preconditions are needed.
+        '''
+        if len(self.widgets) == 0:
+            # No widgets == none visible
+            return
+
+        top = self.__get_first_visible_widget()
+
+        if top is None or top.wtype != WidgetType.WTYPE_LEAF:
+            # If the top is not recogized then none visible
+            return
+
+        # Get index of first visible widget in list
+        top_index = self.widgets.index(top)
+
+        bottom = self.__get_last_visible_widget()
+        bottom_index = 0
+
+        if bottom is None or bottom.wtype != WidgetType.WTYPE_LEAF:
+            # Not enough widgets to cover the root container
+            bottom_index = len(self.widgets) - 1
+        else:
+            # Get index of last visible widget in list
+            bottom_index = self.widgets.index(bottom)
+
+        self.__update_visible_widgets(top_index, bottom_index)
+
     def __set_visible(self, widget):
         widget.visible = True
+
         if self.show_function is not None:
             self.show_function(widget)
 
     def __set_hidden(self, widget):
         widget.visible = False
+
         if self.hide_function is not None:
             self.hide_function(widget)
 
@@ -141,33 +173,6 @@ class ScrollableFrame(ttk.Frame):
                     self.__set_visible(self.widgets[i])
 
             self.visible_end_index = new_end_index
-
-    def _check_visible_widget_range(self):
-        '''Retrieves first and last visible widget in the scrollable frame'''
-        if len(self.widgets) == 0:
-            # No widgets == none visible
-            return
-
-        top = self.__get_first_visible_widget()
-
-        if top is None or top.wtype != WidgetType.WTYPE_LEAF:
-            # If the top is not recogized then none visible
-            return
-
-        # Get index of first visible widget in list
-        top_index = self.widgets.index(top)
-
-        bottom = self.__get_last_visible_widget()
-        bottom_index = 0
-
-        if bottom is None or bottom.wtype != WidgetType.WTYPE_LEAF:
-            # Not enough widgets to cover the root container
-            bottom_index = len(self.widgets) - 1
-        else:
-            # Get index of last visible widget in list
-            bottom_index = self.widgets.index(bottom)
-
-        self.__update_visible_widgets(top_index, bottom_index)
 
     def __get_first_visible_widget(self):
         '''Retrieves the first visible widget in the scrollable frame'''
