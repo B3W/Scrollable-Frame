@@ -18,11 +18,16 @@ class ScrollableFrame(ttk.Frame):
     UI element displaying widgets that can be scrolled through. UI element also
     dynamically determines which widgets in the scrollable region are visible.
     '''
-    def __init__(self, master, sfunc=None, hfunc=None, *args, **kwargs):
+    def __init__(self, master,
+                 tpad, lpad,
+                 sfunc=None, hfunc=None,
+                 *args, **kwargs):
         '''
         Override of ttk.Frame's initialization function
 
         :param master: Widget's master
+        :param tpad: Padding applied around top of widgets in scroll frame
+        :param lpad: Padding applied around left of widgets in scroll frame
         :param sfunc: Pointer to function to call on widgets set to visible
         :param hfunc: Pointer to function to call on widgets set to hidden
         '''
@@ -33,16 +38,18 @@ class ScrollableFrame(ttk.Frame):
         self.columnconfigure(1, weight=0)  # AutoScrollbar
         self.rowconfigure(0, weight=1)
 
-        self.widgets = []
+        self.widgets = []  # List of widgets in order of top to bottom
         self.num_widgets = 0
         self.configuring = False
         self.wtype = WidgetType.WTYPE_ROOT_CONTAINER
-        self.depth = 0  # Attibute indicating 'distance' from root container
+        self.depth = 0  # Attibute indicating 'distance' from root widget
         self.initial_check = False
         self.visible_start_index = -1
         self.VISIBLE_START_INDEX_BUFFER = 3
         self.visible_end_index = -1
         self.VISIBLE_END_INDEX_BUFFER = 3
+        self.top_pad = tpad
+        self.left_pad = lpad
         self.show_function = sfunc
         self.hide_function = hfunc
 
@@ -98,6 +105,7 @@ class ScrollableFrame(ttk.Frame):
             # No widgets == none visible
             return
 
+        self.update_idletasks()  # Let UI update
         top = self.__get_first_visible_widget()
 
         if top is None or top.wtype != WidgetType.WTYPE_LEAF:
@@ -176,17 +184,41 @@ class ScrollableFrame(ttk.Frame):
 
     def __get_first_visible_widget(self):
         '''Retrieves the first visible widget in the scrollable frame'''
-        x = self.winfo_rootx() + 5
-        y = self.winfo_rooty() + 5
+        x = self.winfo_rootx() + self.left_pad + 5
+        y_start = self.winfo_rooty() + 1
+        y_end = y_start + self.top_pad + 5
+        y_end += 1  # Range function has exclusive stop and we want to hit end
 
-        return self.winfo_containing(x, y)
+        # Widgets can be as far as 'top_pad' away from each other
+        # Scan the possible range that the widget could be in top to bottom
+        widget = None
+
+        for y in range(y_start, y_end, 5):
+            widget = self.winfo_containing(x, y)
+
+            if widget is not None and widget.wtype == WidgetType.WTYPE_LEAF:
+                break
+
+        return widget
 
     def __get_last_visible_widget(self):
         '''Retrieves the last visible widget in the scrollable frame'''
-        x = self.winfo_rootx() + 5
-        y = self.winfo_rooty() + self.winfo_height() - 5
+        x = self.winfo_rootx() + self.left_pad + 5
+        y_start = self.winfo_rooty() + self.winfo_height() - 1
+        y_end = y_start - self.top_pad - 5
+        y_end -= 1  # Range function has exclusive stop and we want to hit end
 
-        return self.winfo_containing(x, y)
+        # Widgets can be as far as 'top_pad' away from each other
+        # Scan the possible range that the widget could be in bottom to top
+        widget = None
+
+        for y in range(y_start, y_end, -5):
+            widget = self.winfo_containing(x, y)
+
+            if widget is not None and widget.wtype == WidgetType.WTYPE_LEAF:
+                break
+
+        return widget
 
     # CALLBACKS
     def __on_canvas_configure(self, event):

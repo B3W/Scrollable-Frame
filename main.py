@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 import labelframe as lf
+from scrollableframe import WidgetType
 
 
 def populate(cnt):
@@ -29,6 +30,7 @@ if __name__ == '__main__':
     root.rowconfigure(0, weight=10)
     root.rowconfigure(0, weight=1)
     root.minsize(width=400, height=300)
+    root.wtype = WidgetType.WTYPE_ROOT_CONTAINER
 
     lframe = lf.LabelFrame(root)
     lframe.grid(column=0, row=0, sticky=tk.NSEW)
