@@ -73,7 +73,7 @@ class ScrollableFrame(ttk.Frame):
         self.canvas.configure(yscrollcommand=self.vsb.set)
 
         # Initialize 'scrollable' frame for actual message content
-        self.widget_frame = ttk.Frame(self.canvas)
+        self.widget_frame = ttk.Frame(self.canvas, style=self['style'])
         self.widget_frame.wtype = WidgetType.WTYPE_NONROOT_CONTAINER
         self.widget_frame.depth = self.widget_frame.master.depth + 1
         self.widget_frame.columnconfigure(0, weight=1)

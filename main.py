@@ -32,7 +32,10 @@ if __name__ == '__main__':
     root.minsize(width=400, height=300)
     root.wtype = WidgetType.WTYPE_ROOT_CONTAINER
 
-    lframe = lf.LabelFrame(root)
+    style = ttk.Style()
+    style.configure('LabelFrame.TFrame', background='tomato')
+
+    lframe = lf.LabelFrame(root, style='LabelFrame.TFrame')
     lframe.grid(column=0, row=0, sticky=tk.NSEW)
     populate(5)
 
